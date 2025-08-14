@@ -1,0 +1,28 @@
+name: swopify_backend
+description: Backend API for Swopify app built with Dart and Shelf.
+version: 1.0.0
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  shelf: ^1.4.1
+  shelf_router: ^1.1.4
+  shelf_cors_headers: ^0.1.5
+  uuid: ^4.0.0
+  dotenv: ^4.2.0
+  http: ^1.1.0
+  json_annotation: ^4.8.1
+  logging: ^1.2.0
+  meta: ^1.9.1
+  path: ^1.8.3
+  crypto: ^3.0.3
+  image: ^4.0.17
+  intl: ^0.18.1
+  postgres: ^2.6.2
+
+dev_dependencies:
+  lints: ^2.1.1
+  test: ^1.24.3
+  build_runner: ^2.4.6
+  json_serializable: ^6.7.1

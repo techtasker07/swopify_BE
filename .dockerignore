@@ -1,0 +1,41 @@
+# Dart/Flutter related
+.dart_tool/
+.packages
+build/
+.pub-cache/
+.pub/
+
+# Firebase related
+firebase-debug.log
+
+# IDE related
+.idea/
+.vscode/
+*.iml
+
+# Git related
+.git/
+.gitignore
+
+# Docker related
+Dockerfile
+.dockerignore
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Logs
+logs/
+*.log
+
+# Documentation
+README.md
+LICENSE
+CHANGELOG.md
+
+# Tests
+test/
