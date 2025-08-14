@@ -20,6 +20,7 @@ class UserRoutes {
           'message': 'Users API',
           'version': '1.0.0',
           'endpoints': {
+            'get_all_users': 'GET /api/users/all',
             'create_profile': 'POST /api/users/profile',
             'get_user': 'GET /api/users/<id>',
             'update_user': 'PUT /api/users/<id>',
@@ -32,15 +33,36 @@ class UserRoutes {
     });
 
     // Test endpoint
-    router.get('/test', (Request request) {
-      return Response.ok(
-        jsonEncode({
-          'message': 'Users API is working',
-          'timestamp': DateTime.now().toIso8601String(),
-        }),
-        headers: {'content-type': 'application/json'},
-      );
+    router.get('/test', (Request request) async {
+      try {
+        // Test database connection
+        final result = await DatabaseConfig.connection.query('SELECT COUNT(*) as count FROM users');
+        final userCount = result.first.toColumnMap()['count'] as int;
+
+        return Response.ok(
+          jsonEncode({
+            'message': 'Users API is working',
+            'timestamp': DateTime.now().toIso8601String(),
+            'database_connected': true,
+            'total_users': userCount,
+          }),
+          headers: {'content-type': 'application/json'},
+        );
+      } catch (e) {
+        return Response.ok(
+          jsonEncode({
+            'message': 'Users API is working but database connection failed',
+            'timestamp': DateTime.now().toIso8601String(),
+            'database_connected': false,
+            'error': e.toString(),
+          }),
+          headers: {'content-type': 'application/json'},
+        );
+      }
     });
+
+    // Get all users (for testing/admin purposes)
+    router.get('/all', _getAllUsers);
 
     // Create user profile (called from frontend after successful auth)
     router.post('/profile', _createUserProfile);
@@ -314,6 +336,62 @@ class UserRoutes {
       });
     } catch (e) {
       return ResponseUtils.serverError('Error searching users: $e');
+    }
+  }
+
+  /// Get all users (for testing/admin purposes)
+  Future<Response> _getAllUsers(Request request) async {
+    try {
+      final params = request.url.queryParameters;
+      final page = int.tryParse(params['page'] ?? '1') ?? 1;
+      final limit = int.tryParse(params['limit'] ?? '20') ?? 20;
+      final offset = (page - 1) * limit;
+
+      // Get total count
+      final countResult = await DatabaseConfig.connection.query(
+        'SELECT COUNT(*) as count FROM users',
+      );
+      final total = countResult.first.toColumnMap()['count'] as int;
+
+      // Get users with pagination
+      final result = await DatabaseConfig.connection.query(
+        '''SELECT id, email, display_name, bio, profile_image_url, barter_score,
+           badges, kyc_verified, created_at
+           FROM users
+           ORDER BY created_at DESC
+           LIMIT @limit OFFSET @offset''',
+        substitutionValues: {
+          'limit': limit,
+          'offset': offset,
+        },
+      );
+
+      final users = result.map((row) {
+        final data = row.toColumnMap();
+        return {
+          'id': data['id'],
+          'email': data['email'],
+          'displayName': data['display_name'],
+          'bio': data['bio'],
+          'profileImageUrl': data['profile_image_url'],
+          'barterScore': data['barter_score'],
+          'badges': data['badges'],
+          'kycVerified': data['kyc_verified'],
+          'createdAt': (data['created_at'] as DateTime).toIso8601String(),
+        };
+      }).toList();
+
+      return ResponseUtils.success({
+        'data': users,
+        'pagination': {
+          'page': page,
+          'limit': limit,
+          'total': total,
+          'totalPages': (total / limit).ceil(),
+        },
+      });
+    } catch (e) {
+      return ResponseUtils.serverError('Error fetching users: $e');
     }
   }
 }

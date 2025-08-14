@@ -63,6 +63,32 @@ void main() async {
     );
   });
 
+  // Add database test endpoint
+  app.get('/db-test', (shelf.Request request) async {
+    try {
+      final result = await DatabaseConfig.connection.query('SELECT COUNT(*) as count FROM users');
+      final userCount = result.first.toColumnMap()['count'] as int;
+
+      return shelf.Response.ok(
+        jsonEncode({
+          'database_status': 'connected',
+          'timestamp': DateTime.now().toIso8601String(),
+          'total_users': userCount,
+        }),
+        headers: {'content-type': 'application/json'},
+      );
+    } catch (e) {
+      return shelf.Response.ok(
+        jsonEncode({
+          'database_status': 'error',
+          'timestamp': DateTime.now().toIso8601String(),
+          'error': e.toString(),
+        }),
+        headers: {'content-type': 'application/json'},
+      );
+    }
+  });
+
   // Add API info endpoint
   app.get('/api', (shelf.Request request) {
     return shelf.Response.ok(
