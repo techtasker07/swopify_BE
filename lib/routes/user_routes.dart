@@ -13,6 +13,35 @@ class UserRoutes {
   Router get router {
     final router = Router();
 
+    // Root route for users API
+    router.get('/', (Request request) {
+      return Response.ok(
+        jsonEncode({
+          'message': 'Users API',
+          'version': '1.0.0',
+          'endpoints': {
+            'create_profile': 'POST /api/users/profile',
+            'get_user': 'GET /api/users/<id>',
+            'update_user': 'PUT /api/users/<id>',
+            'search_users': 'GET /api/users/search',
+            'test': 'GET /api/users/test'
+          }
+        }),
+        headers: {'content-type': 'application/json'},
+      );
+    });
+
+    // Test endpoint
+    router.get('/test', (Request request) {
+      return Response.ok(
+        jsonEncode({
+          'message': 'Users API is working',
+          'timestamp': DateTime.now().toIso8601String(),
+        }),
+        headers: {'content-type': 'application/json'},
+      );
+    });
+
     // Create user profile (called from frontend after successful auth)
     router.post('/profile', _createUserProfile);
 

@@ -87,15 +87,45 @@ void main() async {
         'error': 'Route not found',
         'path': request.url.path,
         'method': request.method,
-        'available_routes': [
-          '/',
-          '/health',
-          '/api',
-          '/api/listings',
-          '/api/trades',
-          '/api/messages',
-          '/api/users'
-        ]
+        'available_routes': {
+          'root': 'GET /',
+          'health': 'GET /health',
+          'api_info': 'GET /api',
+          'listings': {
+            'root': 'GET /api/listings',
+            'test': 'GET /api/listings/test',
+            'get_all': 'GET /api/listings/',
+            'get_by_id': 'GET /api/listings/<id>',
+            'create': 'POST /api/listings/',
+            'update': 'PUT /api/listings/<id>',
+            'delete': 'DELETE /api/listings/<id>',
+            'by_user': 'GET /api/listings/user/<userId>'
+          },
+          'trades': {
+            'test': 'GET /api/trades/test',
+            'get_all': 'GET /api/trades/?userId=<userId>',
+            'get_by_id': 'GET /api/trades/<id>',
+            'create': 'POST /api/trades/',
+            'update_status': 'PUT /api/trades/<id>/status',
+            'cancel': 'DELETE /api/trades/<id>'
+          },
+          'messages': {
+            'root': 'GET /api/messages',
+            'test': 'GET /api/messages/test',
+            'conversations': 'GET /api/messages/conversations',
+            'get_messages': 'GET /api/messages/conversations/<conversationId>',
+            'send_message': 'POST /api/messages/conversations/<conversationId>',
+            'mark_read': 'PUT /api/messages/conversations/<conversationId>/read'
+          },
+          'users': {
+            'root': 'GET /api/users',
+            'test': 'GET /api/users/test',
+            'create_profile': 'POST /api/users/profile',
+            'get_user': 'GET /api/users/<id>',
+            'update_user': 'PUT /api/users/<id>',
+            'search': 'GET /api/users/search'
+          }
+        }
       }),
       headers: {'content-type': 'application/json'},
     );

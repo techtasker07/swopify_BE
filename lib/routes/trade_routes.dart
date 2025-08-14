@@ -13,6 +13,24 @@ class TradeRoutes {
   Router get router {
     final router = Router();
 
+    // Test endpoint
+    router.get('/test', (Request request) {
+      return Response.ok(
+        jsonEncode({
+          'message': 'Trades API is working',
+          'timestamp': DateTime.now().toIso8601String(),
+          'endpoints': {
+            'get_trades': 'GET /api/trades/?userId=<userId>',
+            'get_trade': 'GET /api/trades/<id>',
+            'create_trade': 'POST /api/trades/',
+            'update_status': 'PUT /api/trades/<id>/status',
+            'cancel_trade': 'DELETE /api/trades/<id>'
+          }
+        }),
+        headers: {'content-type': 'application/json'},
+      );
+    });
+
     // Get all trades for current user
     router.get('/', _getTrades);
 

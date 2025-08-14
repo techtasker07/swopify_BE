@@ -13,6 +13,35 @@ class MessageRoutes {
   Router get router {
     final router = Router();
 
+    // Root route for messages API
+    router.get('/', (Request request) {
+      return Response.ok(
+        jsonEncode({
+          'message': 'Messages API',
+          'version': '1.0.0',
+          'endpoints': {
+            'get_conversations': 'GET /api/messages/conversations',
+            'get_messages': 'GET /api/messages/conversations/<conversationId>',
+            'send_message': 'POST /api/messages/conversations/<conversationId>',
+            'mark_as_read': 'PUT /api/messages/conversations/<conversationId>/read',
+            'test': 'GET /api/messages/test'
+          }
+        }),
+        headers: {'content-type': 'application/json'},
+      );
+    });
+
+    // Test endpoint
+    router.get('/test', (Request request) {
+      return Response.ok(
+        jsonEncode({
+          'message': 'Messages API is working',
+          'timestamp': DateTime.now().toIso8601String(),
+        }),
+        headers: {'content-type': 'application/json'},
+      );
+    });
+
     // Get conversations for current user
     router.get('/conversations', _getConversations);
 
