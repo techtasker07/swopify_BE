@@ -13,6 +13,17 @@ class ListingRoutes {
   Router get router {
     final router = Router();
 
+    // Test endpoint
+    router.get('/test', (Request request) {
+      return Response.ok(
+        jsonEncode({
+          'message': 'Listings API is working',
+          'timestamp': DateTime.now().toIso8601String(),
+        }),
+        headers: {'content-type': 'application/json'},
+      );
+    });
+
     // Get all listings with pagination and filters
     router.get('/', _getListings);
 

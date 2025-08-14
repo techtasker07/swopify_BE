@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:postgres/postgres.dart';
 import 'package:dotenv/dotenv.dart';
 import 'package:logging/logging.dart';
@@ -13,11 +14,12 @@ class DatabaseConfig {
       final env = DotEnv(includePlatformEnvironment: true)..load();
 
       // Ensure we have all required database credentials
-      final dbHost = env['DB_HOST'];
-      final dbPort = env['DB_PORT'];
-      final dbName = env['DB_NAME'];
-      final dbUser = env['DB_USER'];
-      final dbPassword = env['DB_PASSWORD'];
+      // Prioritize Platform.environment for deployment platforms like Render
+      final dbHost = Platform.environment['DB_HOST'] ?? env['DB_HOST'];
+      final dbPort = Platform.environment['DB_PORT'] ?? env['DB_PORT'];
+      final dbName = Platform.environment['DB_NAME'] ?? env['DB_NAME'];
+      final dbUser = Platform.environment['DB_USER'] ?? env['DB_USER'];
+      final dbPassword = Platform.environment['DB_PASSWORD'] ?? env['DB_PASSWORD'];
 
       if (dbHost == null || dbPort == null || dbName == null || dbUser == null || dbPassword == null) {
         throw Exception('Missing required database environment variables. Please check your .env file.');
