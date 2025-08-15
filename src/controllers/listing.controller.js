@@ -9,29 +9,16 @@ const listingController = {
       const userId = req.userId;
       const { title, description, category, condition, estimatedValue, tradePreferences, location } = req.body;
       
-      // Process uploaded images
+      // Process uploaded images (store locally or use a different service)
       const images = [];
       if (req.files && req.files.length > 0) {
-        // Upload images to Firebase Storage
-        const bucket = admin.storage().bucket();
-        
+        // For now, we'll store file paths or use a different storage solution
+        // This is a placeholder - implement your preferred storage solution
         for (const file of req.files) {
-          const fileName = `listings/${userId}/${Date.now()}_${file.originalname}`;
-          const fileUpload = bucket.file(fileName);
-          
-          await fileUpload.save(file.buffer, {
-            metadata: {
-              contentType: file.mimetype,
-            },
-          });
-          
-          // Get public URL
-          const [url] = await fileUpload.getSignedUrl({
-            action: 'read',
-            expires: '01-01-2100',
-          });
-          
-          images.push(url);
+          const fileName = `${Date.now()}_${file.originalname}`;
+          // Store file locally or use another cloud storage service
+          // For demo purposes, we'll use a placeholder URL
+          images.push(`/uploads/listings/${fileName}`);
         }
       }
       
@@ -165,28 +152,15 @@ const listingController = {
       
       // Process new images if any
       if (req.files && req.files.length > 0) {
-        const bucket = admin.storage().bucket();
         const newImages = [];
-        
+
         for (const file of req.files) {
-          const fileName = `listings/${userId}/${Date.now()}_${file.originalname}`;
-          const fileUpload = bucket.file(fileName);
-          
-          await fileUpload.save(file.buffer, {
-            metadata: {
-              contentType: file.mimetype,
-            },
-          });
-          
-          // Get public URL
-          const [url] = await fileUpload.getSignedUrl({
-            action: 'read',
-            expires: '01-01-2100',
-          });
-          
-          newImages.push(url);
+          const fileName = `${Date.now()}_${file.originalname}`;
+          // Store file locally or use another cloud storage service
+          // For demo purposes, we'll use a placeholder URL
+          newImages.push(`/uploads/listings/${fileName}`);
         }
-        
+
         // Combine with existing images or replace them
         if (req.body.keepExistingImages === 'true') {
           listing.images = [...listing.images, ...newImages];

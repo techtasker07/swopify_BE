@@ -7,11 +7,10 @@ const http = require('http');
 const socketIo = require('socket.io');
 const routes = require('./routes');
 
-// Initialize Firebase Admin SDK
+// Initialize Firebase Admin SDK (for authentication only)
 const serviceAccount = require('../firebase-service-account.json');
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'techtasker-solutions.firebasestorage.app'
+  credential: admin.credential.cert(serviceAccount)
 });
 
 const app = express();

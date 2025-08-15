@@ -48,26 +48,12 @@ const messageController = {
       // Process media if any
       let mediaUrl = null;
       let mediaType = null;
-      
+
       if (req.file) {
-        // Upload to Firebase Storage
-        const bucket = admin.storage().bucket();
-        const fileName = `messages/${senderId}/${Date.now()}_${req.file.originalname}`;
-        const fileUpload = bucket.file(fileName);
-        
-        await fileUpload.save(req.file.buffer, {
-          metadata: {
-            contentType: req.file.mimetype,
-          },
-        });
-        
-        // Get public URL
-        const [url] = await fileUpload.getSignedUrl({
-          action: 'read',
-          expires: '01-01-2100',
-        });
-        
-        mediaUrl = url;
+        // Store file locally or use another cloud storage service
+        const fileName = `${Date.now()}_${req.file.originalname}`;
+        // For demo purposes, we'll use a placeholder URL
+        mediaUrl = `/uploads/messages/${fileName}`;
         mediaType = req.file.mimetype.startsWith('image/') ? 'image' : 'video';
       }
       
